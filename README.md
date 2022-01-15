@@ -132,6 +132,9 @@ Relative links to the local images are resolved by default (to prevent it use `-
 <img src="data:image/png;base64,..."></img>
 ```
 
+## Credits
+This Plugin design was expired from: https://github.com/teux/ng-cache-loader
+
 # License
 
 MIT (http://www.opensource.org/licenses/mit-license.php)
