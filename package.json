@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-ng-cache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Puts HTML partials in the Angular's $templateCache.",
   "main": "index.js",
   "files": [
@@ -52,10 +52,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mgenov/rollup-plugin-ng-cache.git"
+    "url": "https://github.com/clouway/rollup-plugin-ng-cache.git"
   },
   "bugs": {
-    "url": "https://github.com/mgenov/rollup-plugin-ng-cache/issues"
+    "url": "https://github.com/clouway/rollup-plugin-ng-cache/issues"
   },
-  "homepage": "https://github.com/mgenov/rollup-plugin-ng-cache"
+  "homepage": "https://github.com/clouway/rollup-plugin-ng-cache"
 }
