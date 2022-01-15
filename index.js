@@ -142,3 +142,4 @@ function ngcache(opts = {}) {
 }
 
 exports.ngcache = ngcache;
+exports.default = ngcache; 

@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-ng-cache",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Puts HTML partials in the Angular's $templateCache.",
   "main": "dist/rollup-plugin-ng-cache.js",
   "jsnext:main": "dist/rollup-plugin-ng-cache.mjs",
