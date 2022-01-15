@@ -1,0 +1,61 @@
+{
+  "name": "rollup-plugin-ng-cache",
+  "version": "0.0.1",
+  "description": "Puts HTML partials in the Angular's $templateCache.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib/moduleId.js",
+    "lib/scriptParser.js",
+    "lib/templateId.js",
+    "lib/urlParser"
+  ],
+  "scripts": {
+    "test": "mocha test/*.js",
+    "unittests": "mocha test/unit/*"
+  },
+  "keywords": [
+    "angular",
+    "template",
+    "cache",
+    "rollup",
+    "plugin"
+  ],
+  "author": {
+    "name": "Miroslav Genov",
+    "email": "mgenov@gmail.com",
+    "url": "https://github.com/clouway/rollup-plugin-ng-cache"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "angular": "1.5.8",
+    "angular-mocks": "1.5.8",
+    "chai": "^3.2.0",
+    "jsdom": "19.0.0",
+    "jsdom-global": "3.0.2",
+    "mocha": "^6.0.1",
+    "prettier": "^2.5.1",
+    "rollup": "^2.64.0",
+    "webpack": "^2.4.1"
+  },
+  "dependencies": {
+    "extend": "^3.0.0",
+    "fastparse": "^1.0.0",
+    "html-minifier": "^3.0.2",
+    "loader-utils": "^1.1.0",
+    "rollup-pluginutils": "^2.8.2"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgenov/rollup-plugin-ng-cache.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mgenov/rollup-plugin-ng-cache/issues"
+  },
+  "homepage": "https://github.com/mgenov/rollup-plugin-ng-cache"
+}
