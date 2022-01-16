@@ -5,7 +5,7 @@ const urlParser = require('./lib/urlParser.js');
 const getTemplateId = require('./lib/templateId.js');
 const getModuleId = require('./lib/moduleId.js');
 
-const { createFilter } = require("rollup-pluginutils");
+const { createFilter } = require("@rollup/pluginutils");
 
 var PRE_STUB = 'var angular=window.angular,ngModule;\n' +
     'try {ngModule=angular.module(["${mod}"])}\n' +
@@ -50,7 +50,7 @@ function ngcache(opts = {}) {
         throw Error("include option should be specified");
     }
 
-    const filter = createFilter(opts.include, opts.exclude);
+    const filter = createFilter(opts.include || '*.tpl.html', opts.exclude || 'node_modules/**');
 
     opts = extend(opts, {
         minimize: true,
@@ -67,76 +67,73 @@ function ngcache(opts = {}) {
     return {
         name: "ngcache",
         transform(code, id) {
+            if (!filter(id)) {
+                return
+            }
+            var minimizeOpts;
+            var moduleId = 'ng';
+            var result = [];
+            var scripts;
+            var html;
+            var scr;
+            var source = code;
 
-            if (filter(id)) {
-                var minimizeOpts;
-                var moduleId = 'ng';
-                var result = [];
-                var scripts;
-                var html;
-                var scr;
-                var source = code;
+            try {
+                source = htmlMinifier.minify(code, extend({}, opts));
+            } catch (e) {
+                console.log('warning: ', e);
+            }
+
+            var scripts = scriptParser.parse('root', source, { scripts: [] }).scripts;
+            source = Array.prototype.slice.apply(source);
+
+            // Prepare named templates
+            while (scripts.length) {
+                scr = scripts.pop();
+                html = source
+                    .splice(scr.idx, scr.len)
+                    .splice(scr.contIdx, scr.contLen)
+                    .join('');
 
                 try {
-                    source = htmlMinifier.minify(code, extend({}, opts));
+                    html = htmlMinifier.minify(html, extend({}, opts));
                 } catch (e) {
                     console.log('warning: ', e);
                 }
 
-                var scripts = scriptParser.parse('root', source, { scripts: [] }).scripts;
-                source = Array.prototype.slice.apply(source);
-
-                // Prepare named templates
-                while (scripts.length) {
-                    scr = scripts.pop();
-                    html = source
-                        .splice(scr.idx, scr.len)
-                        .splice(scr.contIdx, scr.contLen)
-                        .join('');
-
-                    try {
-                        html = htmlMinifier.minify(html, extend({}, opts));
-                    } catch (e) {
-                        console.log('warning: ', e);
-                    }
-
-                    if (scr.id) {
-                        result.push({
-                            key: scr.id,
-                            val: resolveUrl(opts, html),
-                            i: result.length + 1,
-                        });
-                    } else {
-                        source.splice(scr.idx, 0, html);
-                    }
-                }
-                // Prepare the ramaining templates (means w/o `script` tag or w/o `id` attribute)
-                source = source.join('');
-
-
-                if (/[^\s]/.test(source) || !result.length) {
-                    var templateId = getTemplateId.call(this, source, id, opts);
-                    var mod = getModuleId.call(this, templateId, opts);
-                    moduleId = mod.moduleId;
+                if (scr.id) {
                     result.push({
-                        key: mod.templateId,
-                        val: resolveUrl(opts, source),
+                        key: scr.id,
+                        val: resolveUrl(opts, html),
                         i: result.length + 1,
                     });
+                } else {
+                    source.splice(scr.idx, 0, html);
                 }
-
-
-
-                result = result.map(supplant.bind(null, STUB));
-                result.push('export default v' + result.length + ';');
-                result.unshift(supplant(PRE_STUB, { mod: moduleId }));
-                source = result.join('\n');
-
-                return {
-                    code: source,
-                    map: { mappings: "" },
-                };
             }
+            // Prepare the ramaining templates (means w/o `script` tag or w/o `id` attribute)
+            source = source.join('');
+
+            if (/[^\s]/.test(source) || !result.length) {
+                var templateId = getTemplateId.call(this, source, id, opts);
+                var mod = getModuleId.call(this, templateId, opts);
+                moduleId = mod.moduleId;
+                result.push({
+                    key: mod.templateId,
+                    val: resolveUrl(opts, source),
+                    i: result.length + 1,
+                });
+            }
+
+            result = result.map(supplant.bind(null, STUB));
+            result.push('export default v' + result.length + ';');
+            result.unshift(supplant(PRE_STUB, { mod: moduleId }));
+            source = result.join('\n');
+
+            return {
+                code: source,
+                map: { mappings: "" },
+            };
         },
     };
 }
